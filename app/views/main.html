@@ -1,0 +1,32 @@
+<div class="jumbotron">
+  <p>What is the price of Bitcoin?</p>
+  <h1 ng-bind="btcPrice"></h1>
+  <!-- <div class="loading-spiner-holder" loading ><div class="loading-spiner">LODAING</div></div> -->
+  <h1 ng-hide="btcPrice"><span class="glyphicon glyphicon-repeat glyphicon-refresh-animate"></span></h1>
+  <!-- Split button - https://angular-ui.github.io/bootstrap/ -->
+  <div class="btn-group" dropdown>
+    <button type="button" class="btn btn-primary" ng-bind="selectedCurrencyCode"></button>
+    <button type="button" class="btn btn-primary dropdown-toggle" dropdown-toggle>
+      <span class="caret"></span>
+      <span class="sr-only"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li ng-repeat="c in currencies">
+        <a ng-click="dropdownClick($index)" href>{{c.code}} - {{c.name}}</a>
+        <div ng-if="$index == topCurrencies.length-1" class="divider"></div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <p>What was the price of Bitcoin?</p>
+<div ng-switch="graphLoading">
+  <div ng-switch-when="true">
+    <h2><span ng-show="graphLoading" class="glyphicon glyphicon-repeat glyphicon-refresh-animate"></span></h2>
+  </div>
+  <div ng-switch-when="false">
+    <nvd3 options='graphOptions' data='graphData'></nvd3>
+  </div>
+</div>
+</div>
