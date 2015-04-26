@@ -78,7 +78,7 @@ myapp.controller('MainCtrl', function ($scope, $filter, $resource, $log) {
     $scope.getBitcoinGraph($scope.currencies[index].code);
   };
 
-  // ---- angular-nvd3 ----
+  // Get and display Bitcoin Graph
   $scope.getBitcoinGraph = function(currencyCode) {
     $scope.graphLoading = true;
 
@@ -92,7 +92,6 @@ myapp.controller('MainCtrl', function ($scope, $filter, $resource, $log) {
             transitionDuration: 300,
             showValues: false,
             height: 300,
-
             x: function(d){ return d.x; },
             y: function(d){ return d.y.toFixed(2); },
             xAxis: {
