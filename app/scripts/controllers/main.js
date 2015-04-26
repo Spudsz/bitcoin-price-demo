@@ -14,9 +14,11 @@ myapp.controller('MainCtrl', function ($scope, $filter, $resource, $log) {
   $scope.topCurrencies = [{code:'AUD'},{code:'USD'},{code:'EUR'},{code:'GBP'},{code:'JPY'},{code:'CAD'},{code:'CNY'}];
   $scope.selectedCurrencyCode = $scope.topCurrencies[0].code;
   $scope.btcPrice = '';
+  $scope.graphLoading = true;
 
   // CurrencyCode Dropdown
   $scope.getCurrencies = function() {
+
     var res = $resource('https://bitpay.com/currencies');
     res.get('', function(bitpay){
       // Server Returns:
@@ -28,7 +30,7 @@ myapp.controller('MainCtrl', function ($scope, $filter, $resource, $log) {
       // Find all $scope.topCurrencies in bitpay.data and remove them
       // Loop bitpay.data once - larger array
       for (var i = 0; i < bitpay.data.length; i++) {
-        $log.log('Loop: ', i, bitpay.data[i].code); // debug
+        // $log.log('Loop: ', i, bitpay.data[i].code); // debug
 
         // Loop $scope.topCurrencies multiple times - smaller array
         for (var j = 0; j < $scope.topCurrencies.length; j++) {
@@ -44,11 +46,15 @@ myapp.controller('MainCtrl', function ($scope, $filter, $resource, $log) {
       // Join arrays so we get $scope.topCurencies at the top
       $scope.currencies = $scope.topCurrencies.concat(bitpay.data);
 
-      // Force the inital load order. Only call getBitcoinPrice once we have 
-      // populated the $scope.currencies array so we can get the currency symbol
+      // Force the inital load order.
+      // Only call getBitcoinPrice once we have populated the 
+      // $scope.currencies array so we can get the currency symbol
       $scope.getBitcoinPrice($scope.currencies[0]);
-    });
 
+      // Force the inital load order.
+      // Render the Bitcoin Graph
+      $scope.getBitcoinGraph($scope.currencies[0].code);
+    });
   };
 
   // Get and display Bitcoin price
@@ -64,11 +70,75 @@ myapp.controller('MainCtrl', function ($scope, $filter, $resource, $log) {
         $scope.btcPrice = $filter('currency')(bitpay.data.rate, selectedCurrency.symbol, 2);
       });
     }
-
   };
 
+  // CurrencyCode Dropdown - click
   $scope.dropdownClick = function(index) {
     $scope.getBitcoinPrice($scope.currencies[index]);
+    $scope.getBitcoinGraph($scope.currencies[index].code);
+  };
+
+  // ---- angular-nvd3 ----
+  $scope.getBitcoinGraph = function(currencyCode) {
+    $scope.graphLoading = true;
+
+    $scope.graphOptions = {
+        chart: {
+            type: 'lineChart',
+            interpolate: 'step',
+            showLegend: false,
+            showMaxMin: false,
+            useInteractiveGuideline: true,
+            transitionDuration: 300,
+            showValues: false,
+            height: 300,
+
+            x: function(d){ return d.x; },
+            y: function(d){ return d.y.toFixed(2); },
+            xAxis: {
+              showMaxMin: false,
+              tickFormat: function(d){
+                return $filter('date')(d,'dd-MM-yy');
+              },
+              tickPadding: 15
+            },
+            yAxis: {
+              showMaxMin: false,
+              tickPadding: 10
+            }
+        }
+    };
+
+    var res = $resource('https://api.coindesk.com/v1/bpi/historical/close.json?currency=:code');
+    res.get({code:currencyCode}, function(coindesk){
+      // Server Returns: 
+      // {
+      //   bpi: {
+      //   2015-03-26: 247.648,
+      //   ...
+      //   2015-04-25: 225.8529
+      //   },
+      //   disclaimer: "This data was produced from the CoinDesk Bitcoin Price Index. BPI value data returned as USD.",
+      //   time: {
+      //     updated: "Apr 26, 2015 00:03:00 UTC",
+      //     updatedISO: "2015-04-26T00:03:00+00:00"
+      //   }
+      // }
+      $log.log('Coindesk: ',coindesk.bpi);
+
+      var tmpArray = [];
+      angular.forEach(coindesk.bpi, function(value,key) {
+        tmpArray.push({x: Date.parse(key), y: value});
+      });
+      $log.log('tmpArray: ', tmpArray);
+      
+      $scope.graphData = [{
+        values: tmpArray,
+        key: currencyCode
+      }];
+
+      $scope.graphLoading = false;
+    });
   };
 
   // Go!

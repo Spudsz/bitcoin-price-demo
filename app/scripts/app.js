@@ -17,7 +17,8 @@ var myapp = angular.module('bitcoin-price-demo', [
   'ngRoute',
   'ngSanitize',
   'ngTouch',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'nvd3'
 ]);
 myapp.config(function ($routeProvider) {
   $routeProvider
