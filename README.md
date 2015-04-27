@@ -16,7 +16,7 @@ A simple 31 day Bitcoin price history is graphed using data from the [Coindesk A
  - Nvd3
  - D3
 
-## Build
+## Install
 
 This project was scaffolded using the Yeoman [angular generator](https://github.com/yeoman/generator-angular).
 
