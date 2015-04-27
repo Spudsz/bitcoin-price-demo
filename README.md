@@ -1,11 +1,22 @@
-# bitcoin-price-demo
+# Bitcoin Price Demo
 
-Simple AngularJS web app to neatly show the current price of Bitcoin. 
+Simple AngularJS web app to elegantly show the current price of Bitcoin.
 
-## Build & development
+**Technologies**
+ - Node.js
+ - Yeoman
+ - Bower
+ - Grunt
+ - AngularJS
+ - Bootstrap
+ - Nvd3
+ - D3
+ - [BitPay API](https://bitpay.com/api)
+ - [Coindesk API](http://www.coindesk.com/api/)
 
-Run `grunt` for building and `grunt serve` for preview.
+## Build
 
-## Testing
+This project was scaffolded using the Yeoman [angular generator](https://github.com/yeoman/generator-angular)].
 
-Running `grunt test` will run the unit tests with karma.
+1. Run 'npm install' and 'bower install' to install package dependencies.
+2. Run `grunt serve` for live preview.
