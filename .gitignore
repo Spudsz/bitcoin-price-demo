@@ -1,7 +1,6 @@
 bower_components
 node_modules
 dist
-test
 .tmp
 .sass-cache
 .bowerrc
